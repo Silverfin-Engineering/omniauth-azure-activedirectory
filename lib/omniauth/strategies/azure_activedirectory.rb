@@ -328,9 +328,9 @@ module OmniAuth
               fail JWT::VerificationError,
                    'No keys from key endpoint match the id token'
             end
-            # The key also contains other fields, such as n and e, that are
-            # redundant. x5c is sufficient to verify the id token.
-            OpenSSL::X509::Certificate.new(JWT::Base64.url_decode(x5c.first)).public_key
+            # x5c uses standard Base64 (RFC 7517), not URL-safe Base64.
+            # JWT::Base64.url_decode is strict RFC 4648 in jwt 3.x and raises on '+' or '/'.
+            OpenSSL::X509::Certificate.new(::Base64.decode64(x5c.first)).public_key
           end
         return jwt_claims, jwt_header if jwt_claims['nonce'] == read_nonce
         fail JWT::DecodeError, 'Returned nonce did not match.'
