@@ -127,7 +127,7 @@ describe OmniAuth::Strategies::AzureActiveDirectory do
       #   { 'iss' => 'https://sts.imposter.net/bunch-of-random-chars', ... }
       #
       let(:id_token) { File.read(File.expand_path('../../../fixtures/id_token_bad_issuer.txt', __FILE__)) }
-      it { is_expected.to raise_error JWT::InvalidIssuerError }
+      it { expect { subject.call }.to raise_error JWT::InvalidIssuerError }
     end
 
     context 'with an invalid audience' do
@@ -135,7 +135,7 @@ describe OmniAuth::Strategies::AzureActiveDirectory do
       #   { 'aud' => 'not the client id', ... }
       #
       let(:id_token) { File.read(File.expand_path('../../../fixtures/id_token_bad_audience.txt', __FILE__)) }
-      it { is_expected.to raise_error JWT::InvalidAudError }
+      it { expect { subject.call }.to raise_error JWT::InvalidAudError }
     end
 
     context 'with a non-matching nonce' do
@@ -143,23 +143,23 @@ describe OmniAuth::Strategies::AzureActiveDirectory do
       #   { 'nonce' => 'not my nonce', ... }
       #
       let(:id_token) { File.read(File.expand_path('../../../fixtures/id_token_bad_nonce.txt', __FILE__)) }
-      it { is_expected.to raise_error JWT::DecodeError }
+      it { expect { subject.call }.to raise_error JWT::DecodeError }
     end
 
     context 'with the wrong x5c' do
       let(:x5c) { File.read(File.expand_path('../../../fixtures/x5c_different.txt', __FILE__)) }
       let(:id_token) { File.read(File.expand_path('../../../fixtures/id_token.txt', __FILE__)) }
-      it { is_expected.to raise_error JWT::VerificationError }
+      it { expect { subject.call }.to raise_error JWT::VerificationError }
     end
 
     context 'with a non-matching c_hash' do
       let(:id_token) { File.read(File.expand_path('../../../fixtures/id_token_bad_chash.txt', __FILE__)) }
-      it { is_expected.to raise_error JWT::VerificationError }
+      it { expect { subject.call }.to raise_error JWT::VerificationError }
     end
 
     context 'with a non-matching kid' do
       let(:id_token) { File.read(File.expand_path('../../../fixtures/id_token_bad_kid.txt', __FILE__)) }
-      it { is_expected.to raise_error JWT::VerificationError }
+      it { expect { subject.call }.to raise_error JWT::VerificationError }
     end
 
     context 'with no alg header' do
